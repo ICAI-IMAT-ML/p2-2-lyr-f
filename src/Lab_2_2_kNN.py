@@ -1,3 +1,11 @@
+""" ✅ fit() → (Ya implementada)
+    ✅ compute_distances() → (Ya implementada)
+    ✅ get_k_nearest_neighbors() → Encuentra los índices de los k vecinos más cercanos basándose en las distancias calculadas.
+    most_common_label() → Determina la etiqueta más frecuente entre los k vecinos.
+    predict() → Usa las funciones anteriores para predecir etiquetas de nuevas muestras.
+    predict_proba() → Calcula las probabilidades de cada clase basándose en la proporción de vecinos."""
+
+
 # Laboratory practice 2.2: KNN classification
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -125,7 +133,12 @@ class knn:
         Hint:
             You might want to check the np.argsort function.
         """
-        # TODO
+        ordered_distances_index = np.argsort(distances)
+        k_nearest_neighbors_index = ordered_distances_index[:self.k]
+
+        return k_nearest_neighbors_index  # Invertimos el orden
+
+        
 
     def most_common_label(self, knn_labels: np.ndarray) -> int:
         """Obtain the most common label from the labels of the k nearest neighbors
