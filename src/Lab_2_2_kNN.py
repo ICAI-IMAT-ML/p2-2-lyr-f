@@ -19,7 +19,12 @@ def minkowski_distance(a, b, p=2):
         float: Minkowski distance between arrays a and b.
     """
 
-    # TODO
+    dist=0
+
+    for i in range(len(a)):
+        dist += (abs(a[i] - b[i]))**p
+    
+    return dist**(1/p)
 
 
 # k-Nearest Neighbors Model
@@ -50,7 +55,19 @@ class knn:
             k (int, optional): Number of neighbors to use. Defaults to 5.
             p (int, optional): The degree of the Minkowski distance. Defaults to 2.
         """
-        # TODO
+        
+        # Compruebo que los argumentos son validos
+
+        if X_train.shape[0] != y_train.shape[0]:
+            raise ValueError("Length of X_train and y_train must be equal.")
+        if not isinstance(k, int) or k <= 0 or not isinstance(p, int) or p <= 0:
+            raise ValueError("k and p must be positive integers.")
+        
+        # Almaceno datos de entrenamiento
+        self.k = k
+        self.p = p
+        self.x_train = X_train
+        self.y_train = y_train
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """
@@ -62,7 +79,7 @@ class knn:
         Returns:
             np.ndarray: Predicted class labels.
         """
-        # TODO
+        # TODO 
 
     def predict_proba(self, X):
         """
@@ -88,7 +105,13 @@ class knn:
         Returns:
             np.ndarray: distance from point to each point in the training dataset.
         """
-        # TODO
+
+        distances = np.empty(len(self.x_train))
+        for i, other_point in enumerate(self.x_train):
+            distances[i] = minkowski_distance(point, other_point, self.p)
+
+        return distances
+
 
     def get_k_nearest_neighbors(self, distances: np.ndarray) -> np.ndarray:
         """Get the k nearest neighbors indices given the distances matrix from a point.
