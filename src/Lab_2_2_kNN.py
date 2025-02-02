@@ -1,7 +1,7 @@
 """ ✅ fit() → (Ya implementada)
     ✅ compute_distances() → (Ya implementada)
-    ✅ get_k_nearest_neighbors() → Encuentra los índices de los k vecinos más cercanos basándose en las distancias calculadas.
-    most_common_label() → Determina la etiqueta más frecuente entre los k vecinos.
+    ✅ get_k_nearest_neighbors() → (Ya implementada)
+    ✅ most_common_label() → (Ya implementada)
     predict() → Usa las funciones anteriores para predecir etiquetas de nuevas muestras.
     predict_proba() → Calcula las probabilidades de cada clase basándose en la proporción de vecinos."""
 
@@ -27,12 +27,9 @@ def minkowski_distance(a, b, p=2):
         float: Minkowski distance between arrays a and b.
     """
 
-    dist=0
-
-    for i in range(len(a)):
-        dist += (abs(a[i] - b[i]))**p
+    dist = sum((abs(a - b))**p)**(1/p)
     
-    return dist**(1/p)
+    return dist
 
 
 # k-Nearest Neighbors Model
@@ -149,7 +146,10 @@ class knn:
         Returns:
             int: most common label
         """
-        # TODO
+        
+        etiquetas, apariciones = np.unique(knn_labels, return_counts=True)
+
+        return etiquetas[np.argmax(apariciones)]
 
     def __str__(self):
         """
