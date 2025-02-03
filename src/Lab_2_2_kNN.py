@@ -1,11 +1,3 @@
-""" ✅ fit() → (Ya implementada)
-    ✅ compute_distances() → (Ya implementada)
-    ✅ get_k_nearest_neighbors() → (Ya implementada)
-    ✅ most_common_label() → (Ya implementada)
-    predict() → Usa las funciones anteriores para predecir etiquetas de nuevas muestras.
-    predict_proba() → Calcula las probabilidades de cada clase basándose en la proporción de vecinos."""
-
-
 # Laboratory practice 2.2: KNN classification
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -84,7 +76,19 @@ class knn:
         Returns:
             np.ndarray: Predicted class labels.
         """
-        # TODO 
+
+        predictions = np.empty(len(X))
+
+        for i, point in enumerate(X):
+            distances = self.compute_distances(point)
+            knn_indices = self.get_k_nearest_neighbors(distances)  # Obtener k vecinos más cercanos
+            knn_labels = self.y_train[knn_indices]  # Obtener etiquetas de los vecinos
+            label = self.most_common_label(knn_labels)
+            predictions[i] = label
+
+
+        return predictions
+
 
     def predict_proba(self, X):
         """
@@ -99,7 +103,16 @@ class knn:
         Returns:
             np.ndarray: Predicted class probabilities.
         """
-        # TODO
+        predictions = np.empty((len(X), len(np.unique(self.y_train))))
+
+        for i, point in enumerate(X):
+            distances = self.compute_distances(point)
+            knn_indices = self.get_k_nearest_neighbors(distances)
+            knn_labels = self.y_train[knn_indices]
+            etiquetas, apariciones = np.unique(knn_labels, return_counts=True)
+            predictions[i] = apariciones/self.k
+
+        return predictions
 
     def compute_distances(self, point: np.ndarray) -> np.ndarray:
         """Compute distance from a point to every point in the training dataset
