@@ -323,6 +323,10 @@ def plot_calibration_curve(y_true, y_probs, positive_label, n_bins=10):
             - "true_proportions": Array of the fraction of positives in each bin
 
     """
+
+    y_true_mapped = np.array([1 if label == positive_label else 0 for label in y_true])
+
+
     # TODO
     return {"bin_centers": bin_centers, "true_proportions": true_proportions}
 
@@ -383,5 +387,14 @@ def plot_roc_curve(y_true, y_probs, positive_label):
             - "tpr": Array of True Positive Rates for each threshold.
 
     """
-    # TODO
+    tpr = [None]*11
+    fpr = [None]*11
+
+    thresholds = np.linspace(0, 1, 11)
+    for i, threshold in enumerate(thresholds):
+        y_pred = (y_probs >= threshold).astype(int)
+        metrics = evaluate_classification_metrics(y_true, y_pred, positive_label)
+        tpr[i] = metrics["Recall"]
+        fpr[i] = 1 - metrics["Specificity"]
+
     return {"fpr": np.array(fpr), "tpr": np.array(tpr)}
