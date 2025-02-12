@@ -325,10 +325,37 @@ def plot_calibration_curve(y_true, y_probs, positive_label, n_bins=10):
     """
 
     y_true_mapped = np.array([1 if label == positive_label else 0 for label in y_true])
+    bin_edges = np.linspace(0, 1, n_bins+1)
+    bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+    mean_positives = y_true_mapped.astype(int)/len(y_true_mapped)
+
+    # Define bin edges and centers
+    
+
+    # Initialize an array to store the fraction of positives in each bin
+    true_proportions = np.zeros(n_bins)
+
+    # Compute the true proportion of positives for each bin
+    for i in range(n_bins):
+        in_bin = (y_probs >= bin_edges[i]) & (y_probs < bin_edges[i + 1])
+        # To avoid division by zero, assign NaN if there are no predictions in bin
+        true_proportions[i] = np.mean(y_true_mapped[in_bin]) if np.sum(in_bin)>0 else np.nan
 
 
-    # TODO
+    # Plot the calibration curve
+    plt.figure(figsize=(10, 8))
+    plt.plot(bin_centers, true_proportions, marker="o", label="Calibration Curve")
+    plt.plot([0, 1], [0, 1], linestyle="--", color="pink", label="Perfect Calibration")
+    plt.title("Calibration Curve")
+    plt.xlabel("Mean Predicted Probability")
+    plt.ylabel("Fraction of Positives")
+    plt.legend()
+    plt.grid()
+    plt.show()
+
     return {"bin_centers": bin_centers, "true_proportions": true_proportions}
+
 
 
 
@@ -357,7 +384,22 @@ def plot_probability_histograms(y_true, y_probs, positive_label, n_bins=10):
                 Array of predicted probabilities for the negative class.
 
     """
-    # TODO
+    y_true_mapped = np.array([1 if label == positive_label else 0 for label in y_true])
+    
+    # Separate predicted probabilities for positive and negative classes
+    pos_probs = y_probs[y_true_mapped == 1]
+    neg_probs = y_probs[y_true_mapped == 0]
+    
+    # Plot histograms
+    plt.figure(figsize=(10, 6))
+    plt.hist(pos_probs, bins=n_bins, alpha=0.6, color='blue', label='Positive Class')
+    plt.hist(neg_probs, bins=n_bins, alpha=0.6, color='red', label='Negative Class')
+    plt.xlabel('Probability')
+    plt.ylabel('Frequency')
+    plt.title('Probability Histograms for Positive and Negative Classes')
+    plt.legend()
+    plt.grid()
+    plt.show()
 
     return {
         "array_passed_to_histogram_of_positive_class": y_probs[y_true_mapped == 1],
@@ -396,5 +438,16 @@ def plot_roc_curve(y_true, y_probs, positive_label):
         metrics = evaluate_classification_metrics(y_true, y_pred, positive_label)
         tpr[i] = metrics["Recall"]
         fpr[i] = 1 - metrics["Specificity"]
+
+    # Plot the calibration curve
+    plt.figure(figsize=(10, 8))
+    plt.plot(fpr, tpr, label="Calibration Curve")
+    plt.plot([0, 1], [0, 1], linestyle="--", color="pink", label="Random Classifier")
+    plt.title("Roc Curve")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.legend()
+    plt.grid()
+    plt.show()
 
     return {"fpr": np.array(fpr), "tpr": np.array(tpr)}
